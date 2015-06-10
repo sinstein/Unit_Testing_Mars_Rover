@@ -123,7 +123,6 @@ class Grid
 	end
 end
  
-
 class MarsNavigation
 	def initialize()
 		ip = gets.chomp()
@@ -134,8 +133,8 @@ class MarsNavigation
 		grid = Grid.new(x, y)
 	end
 end
- 
 
+#to ensure this runs only when executed from terminal 
 if __FILE__ == $0
 	nav = MarsNavigation.new
 end
