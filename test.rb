@@ -4,26 +4,45 @@ require "./mars_rover.rb"
 class TestRover < Minitest::Test
 	
 	def setup
-		@rover = Rover.new(0,0,0)
-		@grid = Grid.new(5,5)
+		@rover = Rover.new(0, 0, "N")
+		@grid = Grid.new(5, 5)
 	end
 
 	def test_grid_limits
-		assert_equal 5,@grid.grid_x
-		assert_equal 5,@grid.grid_y
+		assert_equal 5, Grid.new(5, 5).grid_x
+		assert_equal 5, @grid.grid_x
+		assert_equal 5, @grid.grid_y
+
+		assert_raises (ArgumentError) { Grid.new(-3,-3) }
+		assert_raises (ArgumentError) { Grid.new(4,-2) }
+		assert_raises (ArgumentError) { Grid.new(0,6) }
 	end
 
 	def test_direction 
-		assert_equal "W", @rover.move('L',@grid)
-		assert_equal "N", @rover.move('R',@grid)
+		@rover.move('L',@grid)
+		assert_equal 3, @rover.direction
+		
+		@rover.move('R',@grid)
+		assert_equal 0, @rover.direction
 		
 		#moving forward should not change directions
-		assert_equal "N", @rover.move('M',@grid)
-		assert_equal "E", @rover.move('R',@grid)
-		assert_equal "S", @rover.move('R',@grid)
-		assert_equal "S", @rover.move('M',@grid)
-		assert_equal "E", @rover.move('L',@grid)
-		assert_equal "N", @rover.move('L',@grid)
+		@rover.move('M',@grid)
+		assert_equal 0, @rover.direction
+
+		@rover.move('R',@grid)
+		assert_equal 1, @rover.direction
+
+		@rover.move('R',@grid)
+		assert_equal 2, @rover.direction
+
+		@rover.move('M',@grid)
+		assert_equal 2, @rover.direction
+
+		@rover.move('L',@grid)
+		assert_equal 1, @rover.direction
+
+		@rover.move('L',@grid)
+		assert_equal 0, @rover.direction
 	end
 
 	def test_translation
@@ -34,7 +53,7 @@ class TestRover < Minitest::Test
 		assert_equal 2, @rover.y
 
 		#off limit transalations
-		@rover.translate(Grid.new(2,2))
+		assert_raises (ArgumentError) {@rover.translate(Grid.new(2,2)) }
 		assert_equal 2, @rover.y
 
 		@rover.translate(@grid) 
@@ -44,6 +63,7 @@ class TestRover < Minitest::Test
 		@rover.translate(@grid)
 		assert_equal 1, @rover.x
 		#rover now faces East
+
 		@rover.translate(@grid)
 		assert_equal 2, @rover.x
 
@@ -63,10 +83,10 @@ class TestRover < Minitest::Test
 	end
 
 	def test_validity
-		assert_equal true, @rover.is_valid(4,4,@grid)
-		assert_equal false, @rover.is_valid(6,6,@grid)
-		assert_equal false, @rover.is_valid(3,6,@grid)
-		assert_equal false, @rover.is_valid(6,3,@grid)
+		assert_equal true, @rover.is_move_valid(4,4,@grid)
+		assert_raises (ArgumentError) { @rover.is_move_valid(6,6,@grid)}
+		assert_raises (ArgumentError) { @rover.is_move_valid(3,6,@grid)}
+		assert_raises (ArgumentError) { @rover.is_move_valid(6,3,@grid)}
 	end
 
 end
